@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>shwrmax.lock</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --neon: #ff0055; --bg: rgba(10, 10, 10, 0.95); }
+        body { background: #000; color: white; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        
+        /* Realistic Glass Panel */
+        .panel { width: 340px; background: var(--bg); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; position: relative; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .neon-glow { box-shadow: 0 0 15px var(--neon); border-color: var(--neon); }
+        
+        /* Login Screen */
+        #login-screen { padding: 30px; text-align: center; }
+        .input-box { background: #1a1a1a; border: 1px solid #333; padding: 12px; border-radius: 8px; width: 100%; color: white; outline: none; margin-bottom: 15px; }
+        
+        /* Sidebar & Content */
+        .sidebar { width: 60px; background: #000; border-right: 1px solid #222; }
+        .nav-btn { height: 50px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #444; transition: 0.3s; }
+        .nav-btn.active { color: var(--neon); background: rgba(255, 0, 85, 0.1); }
+        
+        /* Toggles & Sliders */
+        .switch { position: relative; width: 34px; height: 18px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider-toggle { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #333; border-radius: 20px; transition: 0.4s; }
+        .slider-toggle:before { content: ""; position: absolute; height: 12px; width: 12px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.4s; }
+        input:checked + .slider-toggle { background: var(--neon); }
+        input:checked + .slider-toggle:before { transform: translateX(16px); }
+
+        /* FPS Slider */
+        input[type="range"] { -webkit-appearance: none; width: 100%; background: #333; height: 4px; border-radius: 5px; outline: none; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; background: var(--neon); border-radius: 50%; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div id="login-screen" class="panel">
+        <h2 class="text-xl font-bold mb-2">shwrmax<span style="color: var(--neon)">.lock</span></h2>
+        <p class="text-[10px] text-gray-500 mb-6 italic">@shawarma444x | V2.0</p>
+        <input type="password" id="pass" class="input-box" placeholder="Enter Password...">
+        <button onclick="checkPass()" class="w-full py-3 rounded-lg font-bold text-sm" style="background: var(--neon)">LOGIN</button>
+    </div>
+
+    <div id="main-app" class="panel hidden flex h-[400px]">
+        <div class="sidebar flex flex-col pt-2">
+            <div class="nav-btn active" onclick="showTab('home')"><i class="fa-solid fa-house-chimney"></i></div>
+            <div class="nav-btn" onclick="showTab('sensi')"><i class="fa-solid fa-magnifying-glass"></i></div>
+            <div class="nav-btn" onclick="showTab('colors')"><i class="fa-solid fa-palette"></i></div>
+            <div class="mt-auto mb-4 text-center text-pink-600"><i class="fa-brands fa-tiktok"></i></div>
+        </div>
+
+        <div class="flex-1 p-4 overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-xs font-bold text-gray-400">@shawarma444x</span>
+                <span id="fps-label" class="text-[10px] text-pink-500 font-mono">120 FPS</span>
+            </div>
+
+            <div id="home" class="tab-content space-y-3">
+                <div class="flex justify-between items-center bg-[#151515] p-3 rounded-lg border border-white/5">
+                    <span class="text-xs">Bypass Anti-Cheat</span>
+                    <label class="switch"><input type="checkbox"><span class="slider-toggle"></span></label>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] text-gray-500 uppercase">Frame Rate Limit</label>
+                    <input type="range" min="60" max="144" value="120" step="1" oninput="updateFPS(this.value)">
+                </div>
+                <button class="w-full py-3 mt-4 rounded-md text-[10px] font-bold tracking-widest border border-pink-600/30 bg-pink-600/10">INJETAR NO FF</button>
+            </div>
+
+            <div id="sensi" class="tab-content hidden space-y-3">
+                <input type="text" id="deviceName" class="input-box !mb-2 !text-xs" placeholder="Search Device (ex: iPhone 15, S24)">
+                <button onclick="generateSensi()" class="w-full bg-white/5 py-2 text-[10px] font-bold rounded border border-white/10">GERAR SENSI</button>
+                <div id="sensi-result" class="hidden grid grid-cols-2 gap-2 text-[10px] font-mono">
+                    <div class="bg-black p-2 border border-white/5">GERAL: <span id="s-g" class="text-pink-500"></span></div>
+                    <div class="bg-black p-2 border border-white/5">RED DOT: <span id="s-r" class="text-pink-500"></span></div>
+                </div>
+            </div>
+
+            <div id="colors" class="tab-content hidden space-y-2">
+                <p class="text-[10px] text-gray-400 uppercase">Panel Theme</p>
+                <div class="flex gap-2">
+                    <div onclick="changeColor('#ff0055')" class="w-6 h-6 rounded-full bg-[#ff0055] cursor-pointer"></div>
+                    <div onclick="changeColor('#00ff88')" class="w-6 h-6 rounded-full bg-[#00ff88] cursor-pointer"></div>
+                    <div onclick="changeColor('#00a2ff')" class="w-6 h-6 rounded-full bg-[#00a2ff] cursor-pointer"></div>
+                    <div onclick="changeColor('#ffae00')" class="w-6 h-6 rounded-full bg-[#ffae00] cursor-pointer"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function checkPass() {
+            const p = document.getElementById('pass').value;
+            if (p === "macrosensi12345") {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('main-app').classList.remove('hidden');
+            } else { alert("Wrong Password!"); }
+        }
+
+        function showTab(id) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
+
+        function updateFPS(val) { document.getElementById('fps-label').innerText = val + " FPS"; }
+
+        function changeColor(hex) { document.documentElement.style.setProperty('--neon', hex); }
+
+        function generateSensi() {
+            const device = document.getElementById('deviceName').value;
+            if(!device) return alert("Enter device name");
+            document.getElementById('sensi-result').classList.remove('hidden');
+            document.getElementById('s-g').innerText = Math.floor(Math.random() * (100 - 92) + 92);
+            document.getElementById('s-r').innerText = Math.floor(Math.random() * (100 - 85) + 85);
+        }
+    </script>
+</body>
+</html>
